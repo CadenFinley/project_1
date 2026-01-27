@@ -2,9 +2,9 @@
 import sys
 
 matrix: list[list[str | int]] = []
-kp_file = ""
+kp_files = []
 
-def read_file():
+def read_file(kp_file: str):
     global matrix
     with open(kp_file, "r") as file:
         for line in file:
@@ -138,12 +138,20 @@ def greedy_ratio():
         
 
 def main():
-    global kp_file
-    kp_file = sys.argv[1]
-    read_file()
-    greedy_value()
-    greedy_weight()
-    greedy_ratio()
+    global kp_files
+    if len(sys.argv) <= 1:
+        print("Usage: python main.py <knapsack_file>")
+        sys.exit(1)
+    else:
+        for arg in sys.argv[1:]:
+            kp_files.append(arg)
+            
+    for kp_file in kp_files:
+        print(f"{kp_file}")
+        read_file(kp_file)
+        greedy_value()
+        greedy_weight()
+        greedy_ratio()
    
 
 if __name__ == "__main__":
