@@ -12,6 +12,8 @@ def read_file():
                     matrix.append([int(parts[0]), int(parts[1])])
                 elif len(parts) == 3:
                     matrix.append([parts[0], int(parts[1]), int(parts[2])])
+            else:
+                matrix.append([])
                     
 def print_matrix():
     for row in matrix:
