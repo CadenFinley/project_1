@@ -51,30 +51,71 @@ def sort_by_ratio(local_matrix: list[list[str | int]]):
 def greedy_value():
     print("Greedy by value:")
     current_weight = 0
+    total_value = 0
     local_matrix, weight_limit, num_of_items = create_local_matrix()
-    
+    items_gathered = [] # collect a list of which items we took for later use
     local_matrix = sort_by_value(local_matrix)
-    
+
+    # loop through the matrix until the weight limit is reached. 
+    for row in local_matrix:
+        id = row[0]
+        weight = row[1]
+        value = row[2]
+
+        # if we have enough space in our knapsack then take the value
+        if current_weight+weight < weight_limit:
+            current_weight += weight
+            total_value += value
+            items_gathered.append(row[0])
+
     print(num_of_items)
     print(weight_limit)
     print_matrix(local_matrix)
+    print(items_gathered)
+
+    print(f"Ending weight: {current_weight}")
+    print(f"The total value collected: {total_value}")
     
 def greedy_weight():
     print("Greedy by weight:")
+    current_weight = 0
+    total_value = 0
     local_matrix, weight_limit, num_of_items = create_local_matrix()
     
     local_matrix = sort_by_weight(local_matrix)
-    
+    # loop through the matrix until the weight limit is reached. 
+    for row in local_matrix:
+        id = row[0]
+        weight = row[1]
+        value = row[2]
+
+        # if we have enough space in our knapsack then take the value
+        if current_weight+weight < weight_limit:
+            current_weight += weight
+            total_value += value
+            
     print(num_of_items)
     print(weight_limit)
     print_matrix(local_matrix)
     
 def greedy_ratio():
+    current_weight = 0
+    total_value = 0
     print("Greedy by ratio:")
     local_matrix, weight_limit, num_of_items = create_local_matrix()
     
     local_matrix = sort_by_ratio(local_matrix)
-    
+    # loop through the matrix until the weight limit is reached. 
+    for row in local_matrix:
+        id = row[0]
+        weight = row[1]
+        value = row[2]
+
+        # if we have enough space in our knapsack then take the value
+        if current_weight+weight < weight_limit:
+            current_weight += weight
+            total_value += value
+            
     print(num_of_items)
     print(weight_limit)
     print_matrix(local_matrix)
