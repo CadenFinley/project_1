@@ -54,8 +54,8 @@ def greedy_value():
     total_value = 0
     local_matrix, weight_limit, num_of_items = create_local_matrix()
     items_gathered = [] # collect a list of which items we took for later use
+    
     local_matrix = sort_by_value(local_matrix)
-
     # loop through the matrix until the weight limit is reached. 
     for row in local_matrix:
         id = row[0]
@@ -72,7 +72,6 @@ def greedy_value():
     print(weight_limit)
     print_matrix(local_matrix)
     print(items_gathered)
-
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
     
@@ -81,7 +80,8 @@ def greedy_weight():
     current_weight = 0
     total_value = 0
     local_matrix, weight_limit, num_of_items = create_local_matrix()
-    
+    items_gathered = [] # collect a list of which items we took for later use
+
     local_matrix = sort_by_weight(local_matrix)
     # loop through the matrix until the weight limit is reached. 
     for row in local_matrix:
@@ -93,17 +93,23 @@ def greedy_weight():
         if current_weight+weight < weight_limit:
             current_weight += weight
             total_value += value
+            items_gathered.append(row[0])
+
             
     print(num_of_items)
     print(weight_limit)
     print_matrix(local_matrix)
+    print(items_gathered)
+    print(f"Ending weight: {current_weight}")
+    print(f"The total value collected: {total_value}")
     
 def greedy_ratio():
+    print("Greedy by ratio:")
     current_weight = 0
     total_value = 0
-    print("Greedy by ratio:")
     local_matrix, weight_limit, num_of_items = create_local_matrix()
-    
+    items_gathered = [] # collect a list of which items we took for later use
+
     local_matrix = sort_by_ratio(local_matrix)
     # loop through the matrix until the weight limit is reached. 
     for row in local_matrix:
@@ -115,10 +121,14 @@ def greedy_ratio():
         if current_weight+weight < weight_limit:
             current_weight += weight
             total_value += value
-            
+            items_gathered.append(row[0])
+
     print(num_of_items)
     print(weight_limit)
     print_matrix(local_matrix)
+    print(items_gathered)
+    print(f"Ending weight: {current_weight}")
+    print(f"The total value collected: {total_value}")
         
 
 def main():
