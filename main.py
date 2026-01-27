@@ -1,4 +1,4 @@
-# caden and trent   
+# caden and trent
 
 matrix: list[list[str | int]] = []
 kp_file = "test_cases.kp"
@@ -20,6 +20,18 @@ def read_file():
 def print_matrix():
     for row in matrix:
         print(row)
+        
+def greedy_value():
+    time_elapsed = 0
+    print(time_elapsed)
+    
+def greedy_weight():
+    time_elapsed = 0
+    print(time_elapsed)
+    
+def greedy_ratio():
+    time_elapsed = 0
+    print(time_elapsed)
         
 
 def main():
