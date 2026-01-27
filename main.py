@@ -1,99 +1,93 @@
-# Sample Python code, showing how to sort
-#  and how to use Queues
-
+# caden and trent
 import sys
-from queue import Queue
 
-#++++++++++++++++++++++++++++
-# each 'items' is a tuple: name (str), value (int), weight (int)
-def useQueue(items):
-    N = len(items) # N is number of items in list
-    
-    q = Queue()
-    ready = Queue()
-    # put two integers into the queue
-    q.put(items[0][1])
-    q.put(items[0][2])
-    
-    while not q.empty(): # while queue not empty
-        v = q.get()
-        if v < 100:
-            q.put(v*2) # push 2v into queue
-            q.put(v*v) # push v squared into queue
+matrix: list[list[str | int]] = []
+kp_file = ""
+
+def read_file():
+    global matrix
+    with open(kp_file, "r") as file:
+        for line in file:
+            line = line.strip()
+            if line:
+                parts = line.split(", ")
+                if len(parts) == 2:
+                    matrix.append([int(parts[0]), int(parts[1])])
+                elif len(parts) == 3:
+                    matrix.append([parts[0], int(parts[1]), int(parts[2])])
+            else:
+                matrix.append([])
+                    
+def print_matrix(local_matrix: list[list[str | int]]):
+    for row in local_matrix:
+        print(row)
+        
+def create_local_matrix():
+    weight_limit = 0
+    num_of_items = 0
+    local_matrix: list[list[str | int]] = []
+    for row in matrix:
+        line = row.copy()
+        if line:
+            if len(line) == 2:
+                weight_limit = int(line[1])
+                num_of_items = int(line[0])
+            elif len(line) == 3:
+                local_matrix.append(line)
         else:
-            print(f"v = {v}")
+            break
+    return local_matrix, weight_limit, num_of_items
+
+def sort_by_value(local_matrix: list[list[str | int]]):
+    return sorted(local_matrix, key=lambda x: x[2], reverse=True)
+
+def sort_by_weight(local_matrix: list[list[str | int]]):
+    return sorted(local_matrix, key=lambda x: x[1])
+
+def sort_by_ratio(local_matrix: list[list[str | int]]):
+    return sorted(local_matrix, key=lambda x: int(x[2]) / int(x[1]), reverse=True)
+
+
+def greedy_value():
+    print("Greedy by value:")
+    current_weight = 0
+    local_matrix, weight_limit, num_of_items = create_local_matrix()
     
-#++++++++++++++++++++++++++++
-# each 'items' is a tuple: name (str), value (int), weight (int)
-def putItInOrder(items):
-    N = len(items) # N = number of items in list
-
-    sortedItems = sorted(items, key=lambda x: x[0])
-    print("When sorting by name (asc), the first item is:")
-    print(sortedItems[0])
-
-    sortedItems = sorted(items, key=lambda x: x[0],reverse=True)
-    print("When sorting by name (desc), the first item is:")
-    print(sortedItems[0])
+    local_matrix = sort_by_value(local_matrix)
     
-    sortedItems = sorted(items, key=lambda x: x[1])
-    print("When sorting by value (asc), the first item is:")
-    print(sortedItems[0])
-
-    sortedItems = sorted(items, key=lambda x: x[1],reverse=True)
-    print("When sorting by value (desc), the first item is:")
-    print(sortedItems[0])
+    print(num_of_items)
+    print(weight_limit)
+    print_matrix(local_matrix)
     
-    sortedItems = sorted(items, key=lambda x: x[2])
-    print("When sorting by weight (asc), the first item is:")
-    print(sortedItems[0])
-
-    sortedItems = sorted(items, key=lambda x: x[2],reverse=True)
-    print("When sorting by weight (desc), the first item is:")
-    print(sortedItems[0])
-
+def greedy_weight():
+    print("Greedy by weight:")
+    local_matrix, weight_limit, num_of_items = create_local_matrix()
     
+    local_matrix = sort_by_weight(local_matrix)
     
-#----------------------------------
-#  MAIN
-#----------------------------------
+    print(num_of_items)
+    print(weight_limit)
+    print_matrix(local_matrix)
+    
+def greedy_ratio():
+    print("Greedy by ratio:")
+    local_matrix, weight_limit, num_of_items = create_local_matrix()
+    
+    local_matrix = sort_by_ratio(local_matrix)
+    
+    print(num_of_items)
+    print(weight_limit)
+    print_matrix(local_matrix)
+        
 
-# make sure filename is provided
-if len(sys.argv) < 2:
-    print("Please provide filename at command-line.")
-    quit()
+def main():
+    global kp_file
+    kp_file = sys.argv[1]
+    read_file()
+    greedy_value()
+    greedy_weight()
+    greedy_ratio()
+   
 
-# pull problem dataset from file
-file = open(sys.argv[1],"r") # open file from which to read ("r")
-
-# read count and max weight by
-# taking first line from file, stripping off any spaces
-# and splitting into two values (N,W) at the comma
-N, W = file.readline().strip().split(',')
-N = int(N) # store N as an integer (not string)
-W = int(W) # store W as an integer (not string)
-
-# make a list of N tuples, each with 3 values (initially empty strings and 0's)
-items = [("",0,0) for _ in range(N)]
-# replace those 0's with the values for each item
-for r in range(N):
-    name, value, weight = file.readline().strip().split(',')
-    items[r] = (name, int(value), int(weight))
-#print(items)
-
-print()
-print("<* Knapsack problem *>")
-print(f"Weight limit: {W}")
-print()
-print(" Value Weight Name/Index")
-print("-------------------------")
-for x in range(len(items)):
-    print(f" {items[x][1]:>4}   {items[x][2]:>4}    {items[x][0]}")
-
-print()
-print("Call the sample function useQueue")
-useQueue(items)
-
-print()
-print("Call the sample function putItInOrder")
-putItInOrder(items)
+if __name__ == "__main__":
+    main()
