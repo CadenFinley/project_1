@@ -68,12 +68,14 @@ def greedy_value():
             total_value += value
             items_gathered.append(row[0])
 
-    print(num_of_items)
-    print(weight_limit)
-    print_matrix(local_matrix)
+    # print(num_of_items)
+    # print(weight_limit)
+    # print_matrix(local_matrix)
     print(items_gathered)
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
+    
+    print()
     
 def greedy_weight():
     print("Greedy by weight:")
@@ -96,12 +98,14 @@ def greedy_weight():
             items_gathered.append(row[0])
 
             
-    print(num_of_items)
-    print(weight_limit)
-    print_matrix(local_matrix)
+    # print(num_of_items)
+    # print(weight_limit)
+    # print_matrix(local_matrix)
     print(items_gathered)
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
+    
+    print()
     
 def greedy_ratio():
     print("Greedy by ratio:")
@@ -123,12 +127,14 @@ def greedy_ratio():
             total_value += value
             items_gathered.append(row[0])
 
-    print(num_of_items)
-    print(weight_limit)
-    print_matrix(local_matrix)
+    # print(num_of_items)
+    # print(weight_limit)
+    # print_matrix(local_matrix)
     print(items_gathered)
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
+    
+    print()
         
 
 def main():
