@@ -49,17 +49,17 @@ def sort_by_ratio(local_matrix: list[list[str | int]]):
 
 def greedy_value():
     print("Greedy by value:")
-    current_weight = 0
-    total_value = 0
+    current_weight: int = 0
+    total_value: int = 0
     local_matrix, weight_limit, num_of_items = create_local_matrix()
     items_gathered = [] # collect a list of which items we took for later use
     
     local_matrix = sort_by_value(local_matrix)
     # loop through the matrix until the weight limit is reached. 
     for row in local_matrix:
-        id = row[0]
-        weight = row[1]
-        value = row[2]
+        id : str = str(row[0])
+        weight : int = int(row[1])
+        value : int = int(row[2])
 
         # if we have enough space in our knapsack then take the value
         if current_weight+weight <= weight_limit:
@@ -75,17 +75,17 @@ def greedy_value():
     
 def greedy_weight():
     print("Greedy by weight:")
-    current_weight = 0
-    total_value = 0
+    current_weight: int = 0
+    total_value: int = 0
     local_matrix, weight_limit, num_of_items = create_local_matrix()
     items_gathered = [] # collect a list of which items we took for later use
 
     local_matrix = sort_by_weight(local_matrix)
     # loop through the matrix until the weight limit is reached. 
     for row in local_matrix:
-        id = row[0]
-        weight = row[1]
-        value = row[2]
+        id : str = str(row[0])
+        weight : int = int(row[1])
+        value : int = int(row[2])
 
         # if we have enough space in our knapsack then take the value
         if current_weight+weight <= weight_limit:
@@ -101,17 +101,17 @@ def greedy_weight():
     
 def greedy_ratio():
     print("Greedy by ratio:")
-    current_weight = 0
-    total_value = 0
+    current_weight: int = 0
+    total_value: int = 0
     local_matrix, weight_limit, num_of_items = create_local_matrix()
     items_gathered = [] # collect a list of which items we took for later use
 
     local_matrix = sort_by_ratio(local_matrix)
-    # loop through the matrix until the weight limit is reached. 
+    # loop through the matrix until the weight limit is reached.
     for row in local_matrix:
-        id = row[0]
-        weight = row[1]
-        value = row[2]
+        id : str = str(row[0])
+        weight : int = int(row[1])
+        value : int = int(row[2])
 
         # if we have enough space in our knapsack then take the value
         if current_weight+weight < weight_limit:
@@ -129,7 +129,7 @@ def greedy_ratio():
 def main():
     global kp_files
     if len(sys.argv) <= 1:
-        print("Usage: python main.py <knapsack_file>")
+        print("need more args")
         sys.exit(1)
     else:
         for arg in sys.argv[1:]:
