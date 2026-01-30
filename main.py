@@ -67,6 +67,7 @@ def greedy_value():
             total_value += value
             items_gathered.append(row[0])
 
+    print(f"Weight limit: {weight_limit}")
     print(items_gathered)
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
@@ -93,6 +94,7 @@ def greedy_weight():
             total_value += value
             items_gathered.append(row[0])
 
+    print(f"Weight limit: {weight_limit}")
     print(items_gathered)
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
@@ -119,6 +121,7 @@ def greedy_ratio():
             total_value += value
             items_gathered.append(row[0])
 
+    print(f"Weight limit: {weight_limit}")
     print(items_gathered)
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
@@ -136,6 +139,7 @@ def main():
             kp_files.append(arg)
             
     for kp_file in kp_files:
+        matrix.clear()
         print(f"{kp_file}")
         read_file(kp_file)
         greedy_value()
