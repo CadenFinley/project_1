@@ -116,7 +116,7 @@ def greedy_ratio():
         value : int = int(row[2])
 
         # if we have enough space in our knapsack then take the value
-        if current_weight+weight < weight_limit:
+        if current_weight+weight <= weight_limit:
             current_weight += weight
             total_value += value
             items_gathered.append(row[0])
