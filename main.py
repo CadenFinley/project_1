@@ -65,7 +65,7 @@ def greedy_value():
         if current_weight+weight <= weight_limit:
             current_weight += weight
             total_value += value
-            items_gathered.append(row[0])
+            items_gathered.append(id)
 
     print(f"Weight limit: {weight_limit}")
     print(items_gathered)
@@ -92,7 +92,7 @@ def greedy_weight():
         if current_weight+weight <= weight_limit:
             current_weight += weight
             total_value += value
-            items_gathered.append(row[0])
+            items_gathered.append(id)
 
     print(f"Weight limit: {weight_limit}")
     print(items_gathered)
@@ -119,7 +119,7 @@ def greedy_ratio():
         if current_weight+weight <= weight_limit:
             current_weight += weight
             total_value += value
-            items_gathered.append(row[0])
+            items_gathered.append(id)
 
     print(f"Weight limit: {weight_limit}")
     print(items_gathered)
