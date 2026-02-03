@@ -1,9 +1,11 @@
 # caden and trent
 import sys
+import time
 
 matrix: list[list[str | int]] = []
 kp_files = []
 all_items_gathered: list[list[int]] = []
+time_start = 0.0
 
 def read_file(kp_file: str):
     global matrix
@@ -79,9 +81,6 @@ def greedy_value():
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
 
-    print()
-
-
 def greedy_weight():
     print("Greedy by weight:")
     current_weight: int = 0
@@ -107,9 +106,6 @@ def greedy_weight():
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
 
-    print()
-
-
 def greedy_ratio():
     print("Greedy by ratio:")
     current_weight: int = 0
@@ -134,8 +130,6 @@ def greedy_ratio():
     print(items_gathered)
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
-
-    print()
 
 def brute_force():
     print("Brute Force:")
@@ -170,9 +164,6 @@ def brute_force():
     print(items_gathered)
     print(f"Ending weight: {ending_weight}")
     print(f"The total value collected: {highest_value_seen}")
-
-    print()
-
 
 def create_permutations(
     steps: int, matrix: list[list[str | int]], items_gathered: list[int]
@@ -224,8 +215,6 @@ def better_brute_force():
     print(f"Ending weight: {ending_weight}")
     print(f"The total value collected: {highest_value_seen}")
 
-    print()
-
 def better_trees(
     steps: int,
     matrix: list[list[str | int]],
@@ -255,6 +244,14 @@ def better_trees(
     better_trees(steps, matrix, items_gathered, weight_limit)
     better_trees(steps, matrix, new_gathered, weight_limit)
 
+def start_timer():
+    global time_start
+    time_start = time.time()
+
+def stop_timer():
+    time_end = time.time()
+    print(f"time elapsed: {time_end - time_start}")
+    print()
 
 def main():
     global kp_files
@@ -270,12 +267,25 @@ def main():
         print(f"{kp_file}")
         read_file(kp_file)
 
-        # all run time tracking
+        start_timer()
         greedy_value()
+        stop_timer()
+
+        start_timer()
         greedy_weight()
+        stop_timer()
+
+        start_timer()
         greedy_ratio()
+        stop_timer()
+
+        start_timer()
         better_brute_force()
+        stop_timer()
+
+        start_timer()
         brute_force()
+        stop_timer()
 
 
 if __name__ == "__main__":
