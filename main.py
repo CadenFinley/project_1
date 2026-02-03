@@ -21,11 +21,9 @@ def read_file(kp_file: str):
             else:
                 matrix.append([])
 
-
 def print_matrix(local_matrix):
     for row in local_matrix:
         print(row)
-
 
 def create_local_matrix():
     weight_limit = 0
