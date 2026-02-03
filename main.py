@@ -1,10 +1,9 @@
 # caden and trent
 import sys
-from itertools import permutations
 
 matrix: list[list[str | int]] = []
 kp_files = []
-
+all_items_gathered: list[list[int]] = []
 
 def read_file(kp_file: str):
     global matrix
@@ -138,25 +137,13 @@ def greedy_ratio():
 
     print()
 
-
-"""
-8, 18
-A, 3, 7
-B, 5, 2
-C, 8, 11
-D, 2, 4
-E, 6, 9
-F, 9, 5
-G, 4, 10
-H, 7, 6
-    """
-
-
-def init_brute_force():
+def brute_force():
+    print("Brute Force:")
+    all_items_gathered.clear()
     local_matrix, weight_limit, num_of_items = create_local_matrix()
     all_items_gathered.clear()
 
-    brute_force(0, local_matrix, [])
+    create_permutations(0, local_matrix, [])
 
     ending_weight = 0
     highest_value_seen = 0
@@ -179,7 +166,6 @@ def init_brute_force():
                     for index in perm:
                         items_gathered.append(str(local_matrix[index][0]))
 
-
     print(f"Weight limit: {weight_limit}")
     print(items_gathered)
     print(f"Ending weight: {ending_weight}")
@@ -188,11 +174,9 @@ def init_brute_force():
     print()
 
 
-
-all_items_gathered: list[list[int]] = []
-
-
-def brute_force(steps: int, matrix: list[list[str | int]], items_gathered: list[int]):
+def create_permutations(
+    steps: int, matrix: list[list[str | int]], items_gathered: list[int]
+):
     if steps >= len(matrix):
         global all_items_gathered
         all_items_gathered.append(items_gathered.copy())
@@ -203,13 +187,75 @@ def brute_force(steps: int, matrix: list[list[str | int]], items_gathered: list[
 
     steps += 1
 
-    brute_force(steps, matrix, items_gathered)
-    brute_force(steps, matrix, new_gathered)
+    create_permutations(steps, matrix, items_gathered)
+    create_permutations(steps, matrix, new_gathered)
+
 
 def better_brute_force():
+    all_items_gathered.clear()
+    print("Better Brute Force:")
+    local_matrix, weight_limit, num_of_items = create_local_matrix()
 
-
+    better_trees(0, local_matrix, [], weight_limit)
     
+    ending_weight = 0
+    highest_value_seen = 0
+    items_gathered = []
+
+    for perm in all_items_gathered:
+        # print(f"Permutation: {perm}")
+        current_weight = 0
+        total_value = 0
+        for item_index in perm:
+            item_weight = int(local_matrix[item_index][1])
+            item_value = int(local_matrix[item_index][2])
+            if current_weight + item_weight <= weight_limit:
+                current_weight += item_weight
+                total_value += item_value
+                if total_value > highest_value_seen:
+                    highest_value_seen = total_value
+                    ending_weight = current_weight
+                    items_gathered.clear()
+                    for index in perm:
+                        items_gathered.append(str(local_matrix[index][0]))
+
+    print(f"Weight limit: {weight_limit}")
+    print(items_gathered)
+    print(f"Ending weight: {ending_weight}")
+    print(f"The total value collected: {highest_value_seen}")
+
+    print()
+
+def better_trees(
+    steps: int,
+    matrix: list[list[str | int]],
+    items_gathered: list[int],
+    weight_limit: int,
+):
+    # check if this path is still within weight constraint
+    current_weight = 0
+    for item_index in items_gathered:
+        item_weight = int(matrix[item_index][1])
+        current_weight += item_weight
+
+    # if we are over weight limit, stop exploring this path
+    if current_weight > weight_limit:
+        return
+
+    if steps >= len(matrix):
+        global all_items_gathered
+        all_items_gathered.append(items_gathered.copy())
+        return
+
+    new_gathered: list[int] = items_gathered.copy()
+    new_gathered.append(steps)
+
+    steps += 1
+
+    better_trees(steps, matrix, items_gathered, weight_limit)
+    better_trees(steps, matrix, new_gathered, weight_limit)
+
+
 def main():
     global kp_files
     if len(sys.argv) <= 1:
@@ -223,11 +269,13 @@ def main():
         matrix.clear()
         print(f"{kp_file}")
         read_file(kp_file)
-        better_brute_force()
+
+        # all run time tracking
         greedy_value()
         greedy_weight()
         greedy_ratio()
-        init_brute_force()
+        better_brute_force()
+        brute_force()
 
 
 if __name__ == "__main__":
