@@ -7,6 +7,7 @@ kp_files = []
 all_items_gathered: list[list[int]] = []
 time_start = 0.0
 
+
 def read_file(kp_file: str):
     global matrix
     with open(kp_file, "r") as file:
@@ -21,9 +22,11 @@ def read_file(kp_file: str):
             else:
                 matrix.append([])
 
+
 def print_matrix(local_matrix):
     for row in local_matrix:
         print(row)
+
 
 def create_local_matrix():
     weight_limit = 0
@@ -79,6 +82,7 @@ def greedy_value():
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
 
+
 def greedy_weight():
     print("Greedy by weight:")
     current_weight: int = 0
@@ -104,6 +108,7 @@ def greedy_weight():
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
 
+
 def greedy_ratio():
     print("Greedy by ratio:")
     current_weight: int = 0
@@ -128,6 +133,7 @@ def greedy_ratio():
     print(items_gathered)
     print(f"Ending weight: {current_weight}")
     print(f"The total value collected: {total_value}")
+
 
 def brute_force():
     print("Brute Force:")
@@ -163,6 +169,7 @@ def brute_force():
     print(f"Ending weight: {ending_weight}")
     print(f"The total value collected: {highest_value_seen}")
 
+
 def create_permutations(
     steps: int, matrix: list[list[str | int]], items_gathered: list[int]
 ):
@@ -186,7 +193,7 @@ def better_brute_force():
     local_matrix, weight_limit, num_of_items = create_local_matrix()
 
     better_trees(0, local_matrix, [], weight_limit)
-    
+
     ending_weight = 0
     highest_value_seen = 0
     items_gathered = []
@@ -213,6 +220,7 @@ def better_brute_force():
     print(f"Ending weight: {ending_weight}")
     print(f"The total value collected: {highest_value_seen}")
 
+
 def better_trees(
     steps: int,
     matrix: list[list[str | int]],
@@ -229,8 +237,14 @@ def better_trees(
     if current_weight > weight_limit:
         return
 
+    # if we perfectly hit the limit, capture the current path and stop
+    if current_weight == weight_limit:
+        # global all_items_gathered
+        all_items_gathered.append(items_gathered.copy())
+        return
+
     if steps >= len(matrix):
-        global all_items_gathered
+        # global all_items_gathered
         all_items_gathered.append(items_gathered.copy())
         return
 
@@ -242,14 +256,17 @@ def better_trees(
     better_trees(steps, matrix, items_gathered, weight_limit)
     better_trees(steps, matrix, new_gathered, weight_limit)
 
+
 def start_timer():
     global time_start
     time_start = time.time()
+
 
 def stop_timer():
     time_end = time.time()
     print(f"time elapsed: {time_end - time_start}")
     print()
+
 
 def main():
     global kp_files
