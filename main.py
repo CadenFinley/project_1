@@ -205,15 +205,14 @@ def better_brute_force():
         for item_index in perm:
             item_weight = int(local_matrix[item_index][1])
             item_value = int(local_matrix[item_index][2])
-            if current_weight + item_weight <= weight_limit:
-                current_weight += item_weight
-                total_value += item_value
-                if total_value > highest_value_seen:
-                    highest_value_seen = total_value
-                    ending_weight = current_weight
-                    items_gathered.clear()
-                    for index in perm:
-                        items_gathered.append(str(local_matrix[index][0]))
+            current_weight += item_weight
+            total_value += item_value
+        if total_value > highest_value_seen:
+            highest_value_seen = total_value
+            ending_weight = current_weight
+            items_gathered.clear()
+            for index in perm:
+                items_gathered.append(str(local_matrix[index][0]))
 
     print(f"Weight limit: {weight_limit}")
     print(items_gathered)
