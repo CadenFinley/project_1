@@ -183,7 +183,7 @@ def create_permutations(
 
     steps += 1
 
-    create_permutations(steps, matrix, items_gathered)
+    create_permutations(steps, matrix, items_gathered.copy())
     create_permutations(steps, matrix, new_gathered)
 
 
@@ -252,7 +252,7 @@ def better_trees(
 
     steps += 1
 
-    better_trees(steps, matrix, items_gathered, weight_limit)
+    better_trees(steps, matrix, items_gathered.copy(), weight_limit)
     better_trees(steps, matrix, new_gathered, weight_limit)
 
 
