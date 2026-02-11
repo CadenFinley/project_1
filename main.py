@@ -18,7 +18,7 @@ def read_file(kp_file: str):
             if line:
                 parts = line.split(", ")
                 parts_no_space = line.split(",")
-                if (len(parts) != 2):
+                if len(parts) != 2:
                     parts = parts_no_space
                 if len(parts) == 2:
                     matrix.append([int(parts[0]), int(parts[1])])
@@ -150,15 +150,11 @@ def optimized_dp():
     print("Optimized DP:")
     local_matrix, weight_limit, num_of_items = create_local_matrix()
 
-    if weight_limit <= 0 or not local_matrix:
-        print(f"Weight limit: {weight_limit}")
-        print([])
-        print("Ending weight: 0")
-        print("The total value collected: 0")
-        return
-
+    # dp[w] stores the best value achievable with weight limit w
     dp = [0] * (weight_limit + 1)
+    # dp_node[w] stores the index of the node that built dp[w]
     dp_node = [-1] * (weight_limit + 1)
+    # nodes stores (previous_node_index, item_index) to reconstruct chosen items
     nodes: list[tuple[int, int]] = []
 
     for i, row in enumerate(local_matrix):
@@ -168,18 +164,22 @@ def optimized_dp():
         value = int(row[2])
         if weight <= 0:
             continue
+        # iterate backwards to avoid reusing the same item
         for w in range(weight_limit, weight - 1, -1):
             if check_timeout():
                 return
             candidate = dp[w - weight] + value
+            # update if including this item improves the value at weight w
             if candidate > dp[w]:
                 dp[w] = candidate
                 nodes.append((dp_node[w - weight], i))
                 dp_node[w] = len(nodes) - 1
 
+    # choose the best achievable weight and backtrack the selected items
     best_weight = max(range(weight_limit + 1), key=lambda w: dp[w])
     total_value = dp[best_weight]
 
+    # go through the nodes to find which items were included in the optimal solution
     items_gathered = []
     node_index = dp_node[best_weight]
     while node_index != -1:
@@ -187,88 +187,11 @@ def optimized_dp():
         items_gathered.append(str(local_matrix[item_index][0]))
         node_index = prev_node
 
+    # reverse to present items in the order they were chosen
     items_gathered.reverse()
     print(f"Weight limit: {weight_limit}")
     print(items_gathered)
     print(f"Ending weight: {best_weight}")
-    print(f"The total value collected: {total_value}")
-
-
-def fptas_dp(eps: float = 0.1):
-    print(f"FPTAS DP (eps={eps}):")
-    local_matrix, weight_limit, num_of_items = create_local_matrix()
-
-    if weight_limit <= 0 or not local_matrix:
-        print(f"Weight limit: {weight_limit}")
-        print([])
-        print("Ending weight: 0")
-        print("The total value collected: 0")
-        return
-
-    values = [int(row[2]) for row in local_matrix]
-    max_value = max(values)
-    if max_value <= 0:
-        print(f"Weight limit: {weight_limit}")
-        print([])
-        print("Ending weight: 0")
-        print("The total value collected: 0")
-        return
-
-    eps = max(eps, 1e-6)
-    scale = (eps * max_value) / max(len(values), 1)
-    if scale <= 0:
-        scale = 1.0
-
-    scaled_values = [max(1, int(v / scale)) for v in values]
-    total_scaled_value = sum(scaled_values)
-
-    inf = weight_limit + max(int(row[1]) for row in local_matrix) + 1
-    dp = [inf] * (total_scaled_value + 1)
-    dp_node = [-1] * (total_scaled_value + 1)
-    nodes: list[tuple[int, int]] = []
-    dp[0] = 0
-
-    for i, row in enumerate(local_matrix):
-        if check_timeout():
-            return
-        weight = int(row[1])
-        value_scaled = scaled_values[i]
-        if weight <= 0:
-            continue
-        for v in range(total_scaled_value, value_scaled - 1, -1):
-            if check_timeout():
-                return
-            candidate = dp[v - value_scaled] + weight
-            if candidate < dp[v] and candidate <= weight_limit:
-                dp[v] = candidate
-                nodes.append((dp_node[v - value_scaled], i))
-                dp_node[v] = len(nodes) - 1
-
-    best_value_scaled = 0
-    for v in range(total_scaled_value, -1, -1):
-        if dp[v] <= weight_limit:
-            best_value_scaled = v
-            break
-
-    items_gathered = []
-    node_index = dp_node[best_value_scaled]
-    while node_index != -1:
-        prev_node, item_index = nodes[node_index]
-        items_gathered.append(str(local_matrix[item_index][0]))
-        node_index = prev_node
-
-    items_gathered.reverse()
-    ending_weight = dp[best_value_scaled] if best_value_scaled > 0 else 0
-    total_value = 0
-    for item_id in items_gathered:
-        for row in local_matrix:
-            if str(row[0]) == item_id:
-                total_value += int(row[2])
-                break
-
-    print(f"Weight limit: {weight_limit}")
-    print(items_gathered)
-    print(f"Ending weight: {ending_weight}")
     print(f"The total value collected: {total_value}")
 
 
@@ -460,9 +383,8 @@ def main():
         run_with_limit(300, greedy_weight)
         run_with_limit(300, greedy_ratio)
         run_with_limit(300, optimized_dp)
-        run_with_limit(300, fptas_dp)
-        run_with_limit(120, better_brute_force)
-        run_with_limit(120, brute_force)
+        run_with_limit(1200, better_brute_force)
+        run_with_limit(1200, brute_force)
 
 
 if __name__ == "__main__":
