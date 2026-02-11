@@ -17,6 +17,9 @@ def read_file(kp_file: str):
             line = line.strip()
             if line:
                 parts = line.split(", ")
+                parts_no_space = line.split(",")
+                if (len(parts) != 2):
+                    parts = parts_no_space
                 if len(parts) == 2:
                     matrix.append([int(parts[0]), int(parts[1])])
                 elif len(parts) == 3:
@@ -458,8 +461,8 @@ def main():
         run_with_limit(300, greedy_ratio)
         run_with_limit(300, optimized_dp)
         run_with_limit(300, fptas_dp)
-        run_with_limit(1200, better_brute_force)
-        run_with_limit(1200, brute_force)
+        run_with_limit(120, better_brute_force)
+        run_with_limit(120, brute_force)
 
 
 if __name__ == "__main__":
