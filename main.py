@@ -179,6 +179,80 @@ def optimized_dp():
     print(f"The total value collected: {total_value}")
 
 
+def fptas_dp(eps: float = 0.1):
+    print(f"FPTAS DP (eps={eps}):")
+    local_matrix, weight_limit, num_of_items = create_local_matrix()
+
+    if weight_limit <= 0 or not local_matrix:
+        print(f"Weight limit: {weight_limit}")
+        print([])
+        print("Ending weight: 0")
+        print("The total value collected: 0")
+        return
+
+    values = [int(row[2]) for row in local_matrix]
+    max_value = max(values)
+    if max_value <= 0:
+        print(f"Weight limit: {weight_limit}")
+        print([])
+        print("Ending weight: 0")
+        print("The total value collected: 0")
+        return
+
+    eps = max(eps, 1e-6)
+    scale = (eps * max_value) / max(len(values), 1)
+    if scale <= 0:
+        scale = 1.0
+
+    scaled_values = [max(1, int(v / scale)) for v in values]
+    total_scaled_value = sum(scaled_values)
+
+    inf = weight_limit + max(int(row[1]) for row in local_matrix) + 1
+    dp = [inf] * (total_scaled_value + 1)
+    dp_node = [-1] * (total_scaled_value + 1)
+    nodes: list[tuple[int, int]] = []
+    dp[0] = 0
+
+    for i, row in enumerate(local_matrix):
+        weight = int(row[1])
+        value_scaled = scaled_values[i]
+        if weight <= 0:
+            continue
+        for v in range(total_scaled_value, value_scaled - 1, -1):
+            candidate = dp[v - value_scaled] + weight
+            if candidate < dp[v] and candidate <= weight_limit:
+                dp[v] = candidate
+                nodes.append((dp_node[v - value_scaled], i))
+                dp_node[v] = len(nodes) - 1
+
+    best_value_scaled = 0
+    for v in range(total_scaled_value, -1, -1):
+        if dp[v] <= weight_limit:
+            best_value_scaled = v
+            break
+
+    items_gathered = []
+    node_index = dp_node[best_value_scaled]
+    while node_index != -1:
+        prev_node, item_index = nodes[node_index]
+        items_gathered.append(str(local_matrix[item_index][0]))
+        node_index = prev_node
+
+    items_gathered.reverse()
+    ending_weight = dp[best_value_scaled] if best_value_scaled > 0 else 0
+    total_value = 0
+    for item_id in items_gathered:
+        for row in local_matrix:
+            if str(row[0]) == item_id:
+                total_value += int(row[2])
+                break
+
+    print(f"Weight limit: {weight_limit}")
+    print(items_gathered)
+    print(f"Ending weight: {ending_weight}")
+    print(f"The total value collected: {total_value}")
+
+
 def brute_force():
     print("Brute Force:")
     all_items_gathered.clear()
@@ -339,6 +413,10 @@ def main():
 
         start_timer()
         optimized_dp()
+        stop_timer()
+
+        start_timer()
+        fptas_dp()
         stop_timer()
 
         start_timer()
