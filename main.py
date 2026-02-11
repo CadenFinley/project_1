@@ -135,6 +135,50 @@ def greedy_ratio():
     print(f"The total value collected: {total_value}")
 
 
+def optimized_dp():
+    print("Optimized DP:")
+    local_matrix, weight_limit, num_of_items = create_local_matrix()
+
+    if weight_limit <= 0 or not local_matrix:
+        print(f"Weight limit: {weight_limit}")
+        print([])
+        print("Ending weight: 0")
+        print("The total value collected: 0")
+        return
+
+    dp = [0] * (weight_limit + 1)
+    dp_node = [-1] * (weight_limit + 1)
+    nodes: list[tuple[int, int]] = []
+
+    for i, row in enumerate(local_matrix):
+        weight = int(row[1])
+        value = int(row[2])
+        if weight <= 0:
+            continue
+        for w in range(weight_limit, weight - 1, -1):
+            candidate = dp[w - weight] + value
+            if candidate > dp[w]:
+                dp[w] = candidate
+                nodes.append((dp_node[w - weight], i))
+                dp_node[w] = len(nodes) - 1
+
+    best_weight = max(range(weight_limit + 1), key=lambda w: dp[w])
+    total_value = dp[best_weight]
+
+    items_gathered = []
+    node_index = dp_node[best_weight]
+    while node_index != -1:
+        prev_node, item_index = nodes[node_index]
+        items_gathered.append(str(local_matrix[item_index][0]))
+        node_index = prev_node
+
+    items_gathered.reverse()
+    print(f"Weight limit: {weight_limit}")
+    print(items_gathered)
+    print(f"Ending weight: {best_weight}")
+    print(f"The total value collected: {total_value}")
+
+
 def brute_force():
     print("Brute Force:")
     all_items_gathered.clear()
@@ -291,6 +335,10 @@ def main():
 
         start_timer()
         greedy_ratio()
+        stop_timer()
+
+        start_timer()
+        optimized_dp()
         stop_timer()
 
         start_timer()
