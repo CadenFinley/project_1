@@ -6,6 +6,8 @@ matrix: list[list[str | int]] = []
 kp_files = []
 all_items_gathered: list[list[int]] = []
 time_start = 0.0
+deadline_time = 0.0
+timed_out = False
 
 
 def read_file(kp_file: str):
@@ -67,6 +69,8 @@ def greedy_value():
     local_matrix = sort_by_value(local_matrix)
     # loop through the matrix until the weight limit is reached.
     for row in local_matrix:
+        if check_timeout():
+            return
         id: str = str(row[0])
         weight: int = int(row[1])
         value: int = int(row[2])
@@ -93,6 +97,8 @@ def greedy_weight():
     local_matrix = sort_by_weight(local_matrix)
     # loop through the matrix until the weight limit is reached.
     for row in local_matrix:
+        if check_timeout():
+            return
         id: str = str(row[0])
         weight: int = int(row[1])
         value: int = int(row[2])
@@ -119,6 +125,8 @@ def greedy_ratio():
     local_matrix = sort_by_ratio(local_matrix)
     # loop through the matrix until the weight limit is reached.
     for row in local_matrix:
+        if check_timeout():
+            return
         id: str = str(row[0])
         weight: int = int(row[1])
         value: int = int(row[2])
@@ -151,11 +159,15 @@ def optimized_dp():
     nodes: list[tuple[int, int]] = []
 
     for i, row in enumerate(local_matrix):
+        if check_timeout():
+            return
         weight = int(row[1])
         value = int(row[2])
         if weight <= 0:
             continue
         for w in range(weight_limit, weight - 1, -1):
+            if check_timeout():
+                return
             candidate = dp[w - weight] + value
             if candidate > dp[w]:
                 dp[w] = candidate
@@ -214,11 +226,15 @@ def fptas_dp(eps: float = 0.1):
     dp[0] = 0
 
     for i, row in enumerate(local_matrix):
+        if check_timeout():
+            return
         weight = int(row[1])
         value_scaled = scaled_values[i]
         if weight <= 0:
             continue
         for v in range(total_scaled_value, value_scaled - 1, -1):
+            if check_timeout():
+                return
             candidate = dp[v - value_scaled] + weight
             if candidate < dp[v] and candidate <= weight_limit:
                 dp[v] = candidate
@@ -260,12 +276,16 @@ def brute_force():
     all_items_gathered.clear()
 
     create_permutations(0, local_matrix, [])
+    if timed_out:
+        return
 
     ending_weight = 0
     highest_value_seen = 0
     items_gathered = []
 
     for perm in all_items_gathered:
+        if check_timeout():
+            return
         # print(f"Permutation: {perm}")
         current_weight = 0
         total_value = 0
@@ -291,6 +311,8 @@ def brute_force():
 def create_permutations(
     steps: int, matrix: list[list[str | int]], items_gathered: list[int]
 ):
+    if check_timeout():
+        return
     if steps >= len(matrix):
         global all_items_gathered
         all_items_gathered.append(items_gathered.copy())
@@ -311,12 +333,16 @@ def better_brute_force():
     local_matrix, weight_limit, num_of_items = create_local_matrix()
 
     better_trees(0, local_matrix, [], weight_limit)
+    if timed_out:
+        return
 
     ending_weight = 0
     highest_value_seen = 0
     items_gathered = []
 
     for perm in all_items_gathered:
+        if check_timeout():
+            return
         # print(f"Permutation: {perm}")
         current_weight = 0
         total_value = 0
@@ -344,6 +370,8 @@ def better_trees(
     items_gathered: list[int],
     weight_limit: int,
 ):
+    if check_timeout():
+        return
     # check if this path is still within weight constraint
     current_weight = 0
     for item_index in items_gathered:
@@ -385,6 +413,32 @@ def stop_timer():
     print()
 
 
+def set_deadline(seconds: int):
+    global deadline_time, timed_out
+    deadline_time = time.time() + seconds
+    timed_out = False
+
+
+def check_timeout():
+    global timed_out
+    if timed_out:
+        return True
+    if time.time() >= deadline_time:
+        timed_out = True
+        return True
+    return False
+
+
+def run_with_limit(seconds: int, func):
+    set_deadline(seconds)
+    start_timer()
+    func()
+    stop_timer()
+    if timed_out:
+        print(f"Timed out after {seconds} seconds")
+        print()
+
+
 def main():
     global kp_files
     if len(sys.argv) <= 1:
@@ -399,33 +453,13 @@ def main():
         print(f"{kp_file}")
         read_file(kp_file)
 
-        start_timer()
-        greedy_value()
-        stop_timer()
-
-        start_timer()
-        greedy_weight()
-        stop_timer()
-
-        start_timer()
-        greedy_ratio()
-        stop_timer()
-
-        start_timer()
-        optimized_dp()
-        stop_timer()
-
-        start_timer()
-        fptas_dp()
-        stop_timer()
-
-        start_timer()
-        better_brute_force()
-        stop_timer()
-
-        start_timer()
-        brute_force()
-        stop_timer()
+        run_with_limit(300, greedy_value)
+        run_with_limit(300, greedy_weight)
+        run_with_limit(300, greedy_ratio)
+        run_with_limit(300, optimized_dp)
+        run_with_limit(300, fptas_dp)
+        run_with_limit(1200, better_brute_force)
+        run_with_limit(1200, brute_force)
 
 
 if __name__ == "__main__":
